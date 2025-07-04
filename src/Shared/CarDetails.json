@@ -1,0 +1,182 @@
+{
+    "CarDetails": [
+      {
+        "label": "name",
+        "name": "ListingTitle",
+        "fieldType": "text",
+        "requires": true,
+        "columns": 2,
+        "icon": "FalipabordList"
+      },
+      {
+        "label": "TagLine",
+        "name": "TagLine",
+        "fieldType": "text",
+        "requires": true,
+        "icon": "faTag"
+      },
+      {
+        "label": "Original price",
+        "name": "Originalprice",
+        "fieldType": "text",
+        "requires": true,
+        "icon": "FamoneyBillAlt"
+      },
+      {
+        "label": "Category",
+        "name": "Category",
+        "fieldType": "dropdown",
+        "option": [
+          "Suv",
+          "Convertible",
+          "Coupe",
+          "Hatchback",
+          "Hybrid",
+          "Electric",
+          "Tesla",
+          "Truck",
+          "Van",
+          "Sedan"
+        ],
+        "requires": true,
+        "icon": "faCar"
+      },
+      {
+        "label": "Selling price",
+        "name": "Sellingprice",
+        "fieldType": "text",
+        "columns": 1,
+        "requires": true,
+        "icon": "FamoneyBillAlt"
+      },
+      {
+        "label": "Type",
+        "name": "type",
+        "fieldType": "dropdown",
+        "option": ["Electric", "Petrol", "Diesel", "Hybrid"],
+        "requires": true,
+        "columns": 1,
+        "icon": "FachargingStation"
+      },
+      {
+        "label": "Make",
+        "name": "Make",
+        "fieldType": "dropdown",
+        "option": [
+          "Toyota",
+          "Tata",
+          "Honda",
+          "Ford",
+          "Chevrolet",
+          "Mahindra",
+          "Nissan",
+          "BMW",
+          "Kia",
+          "Jeep",
+          "Mazda",
+          "Tesla",
+          "Audi"
+        ],
+        "requires": true
+      },
+      {
+        "label": "Condition",
+        "name": "Condition",
+        "fieldType": "dropdown",
+        "option":["New","old"],
+        "requires": true,
+        "icon": "faTag"
+      },
+      {
+        "label": "Color",
+        "name": "color",
+        "fieldType": "checkbox",
+        "requires": true,
+        "option": ["Black", "Blue", "Gold", "Pink", "Red", "Silver"],
+        "columns": 2
+      },
+      {
+        "label": "Year",
+        "name": "year",
+        "fieldType": "number",
+        "requires": true,
+        "columns": 2,
+        "icon": "FacalendarAlt"
+      },
+      {
+        "label": "DriveType",
+        "name": "drivetype",
+        "fieldType": "dropdown",
+        "requires": true,
+        "option": ["FWD", "RWD", "4WD"],
+        "columns": 1
+      },
+      {
+        "label": "Model",
+        "name": "model",
+        "fieldType": "text",
+        "requires": true,
+        "columns": 1,
+        "icon": "FaCarside"
+      },
+      {
+        "label": "FuelEfficiency",
+        "name": "fuelefficiency",
+        "fieldType": "text",
+        "requires": true,
+        "columns": 1,
+        "icon": "FaGasPump"
+      },
+      {
+         "label":"door",
+
+         "name":"Door",
+         "fieldType":"number",
+         "requires":true,
+         "columns":1,
+         "icon":"FaDoorClosed"
+
+      },
+      {
+        "label":"EnginSize",
+        "name":"EngineSize",
+        "fieldType":"text",
+        "columns":1,
+        "icon":"FaCircle"
+    },
+    {
+        "label":"Cylinder",
+        "name":"Cylinder",
+        "fieldType":"number",
+        "columns":1,
+        "icon":"FaCircle"
+    },
+    {
+        "label":"VIN",
+        "name":"vin",
+        "fieldType":"text",
+        "columns":1,
+        "icon":"FacIdCar"
+    
+    },
+    {
+        "label":"offerType",
+        "name":"offerType",
+        "fieldType":"dropdown",
+        "option":["Buy","Hot offer","sell","Urgent"],
+        "columns":2,
+        "icon":"FaTags"
+
+
+    },
+    {
+        "label":"ListingDescription",
+        "name":"listingDescription",
+        "fieldType":"texttarea",
+        "required":true,
+        "icon":"FaFileAlt"
+    }
+
+    ]
+  }
+  
