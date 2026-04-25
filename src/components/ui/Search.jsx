@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Select,
   SelectContent,
@@ -27,31 +28,29 @@ const pricing = [
 ];
 
 function Search() {
-  // State to hold selected values
+  const navigate = useNavigate();
   const [carCondition, setCarCondition] = useState('');
   const [carMaker, setCarMaker] = useState('');
   const [price, setPrice] = useState('');
   const [error, setError] = useState('');
 
-  // Handler to perform search (declarative validation)
   const handleSearch = () => {
     const isValid = carCondition && carMaker && price;
 
     if (isValid) {
-      setError(''); // Clear error if all fields are valid
-      console.log({
-        carCondition,
-        carMaker,
-        price,
-      });
-      // Add search logic here
+      setError('');
+      const params = new URLSearchParams();
+      if (carCondition) params.set('condition', carCondition);
+      if (carMaker) params.set('make', carMaker);
+      if (price) params.set('price', price);
+      navigate(`/?${params.toString()}`);
     } else {
       setError('Please select all fields.');
     }
   };
 
   return (
-    <div className="  rounded-full p-6 bg-gray-100  shadow-md max-w-4xl mx-auto flex flex-col md:flex-row gap-5 md:gap-10 items-center">
+    <div className="rounded-full p-6 bg-gray-100 shadow-md max-w-4xl mx-auto flex flex-col md:flex-row gap-5 md:gap-10 items-center">
       
       {/* Select for Car Condition (New/Old) */}
       <div className="w-full md:w-64">
@@ -121,3 +120,4 @@ function Search() {
 }
 
 export default Search;
+

@@ -1,32 +1,35 @@
 import Header from '@/components/Header';
 import InputField from '@/lib/inputfield';
 import React, { useState } from 'react';
+import { useUser } from '@clerk/clerk-react';
+import { api } from '@/lib/api';
+import { useNavigate } from 'react-router-dom';
 
 // Car details structure
 const carDetails = {
   CarDetails: [
     {
       label: 'Name',
-      name: 'ListingTitle',
+      name: 'listingTitle',
       fieldType: 'text',
       required: true,
       columns: 2,
     },
     {
       label: 'TagLine',
-      name: 'TagLine',
+      name: 'tagLine',
       fieldType: 'text',
       required: true,
     },
     {
       label: 'Original Price',
-      name: 'OriginalPrice',
+      name: 'originalPrice',
       fieldType: 'number',
       required: true,
     },
     {
       label: 'Category',
-      name: 'Category',
+      name: 'category',
       fieldType: 'dropdown',
       option: [
         'SUV',
@@ -43,7 +46,7 @@ const carDetails = {
     },
     {
       label: 'Selling Price',
-      name: 'SellingPrice',
+      name: 'sellingPrice',
       fieldType: 'number',
       required: true,
     },
@@ -56,7 +59,7 @@ const carDetails = {
     },
     {
       label: 'Make',
-      name: 'Make',
+      name: 'make',
       fieldType: 'dropdown',
       option: [
         'Toyota',
@@ -77,7 +80,7 @@ const carDetails = {
     },
     {
       label: 'Condition',
-      name: 'Condition',
+      name: 'condition',
       fieldType: 'dropdown',
       option: ['new', 'old'],
       required: true,
@@ -97,7 +100,7 @@ const carDetails = {
     },
     {
       label: 'Drive Type',
-      name: 'drivetype',
+      name: 'driveType',
       fieldType: 'dropdown',
       required: true,
       option: ['FWD', 'RWD', '4WD'],
@@ -110,7 +113,7 @@ const carDetails = {
     },
     {
       label: 'Fuel Efficiency',
-      name: 'fuelefficiency',
+      name: 'fuelEfficiency',
       fieldType: 'text',
       required: true,
     },
@@ -163,21 +166,40 @@ const features = {
     { label: 'Tachometer' },
     { label: 'Panoramic Moonroof' },
     { label: 'Heater' },
-    { label: 'Leather Seats' },
     { label: 'Digital Odometer' },
     { label: 'Window-Electric' },
     { label: 'Apple-CarPlay' },
     { label: 'Power Steering' },
     { label: 'Rear Spoiler' },
-    { label: 'Bluetooth' },
     { label: 'Vanity Mirror' },
     { label: 'Rain Sensing Wiper' },
+    { label: 'Adaptive Cruise Control' },
+    { label: 'Lane Keep Assist' },
+    { label: 'Blind Spot Monitor' },
+    { label: '360 Camera' },
+    { label: 'Heated Seats' },
+    { label: 'Ventilated Seats' },
+    { label: 'Wireless Charging' },
+    { label: 'Navigation System' },
+    { label: 'Keyless Entry' },
+    { label: 'Push Start Button' },
+    { label: 'Auto Climate Control' },
+    { label: 'Alloy Wheels' },
+    { label: 'LED Headlights' },
+    { label: 'Parking Sensors' },
+    { label: 'Towing Package' },
+    { label: 'Roof Rack' },
+    { label: 'Sound System' },
   ],
 };
 
 function AddListing() {
+  const { user, isSignedIn } = useUser();
+  const navigate = useNavigate();
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
   // Handle feature checkbox state
   const handleFeatureChange = (e) => {
@@ -194,6 +216,38 @@ function AddListing() {
     }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage('');
+
+    if (!isSignedIn) {
+      setMessage('Please sign in to add a listing.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const payload = {
+        ...formData,
+        features: selectedFeatures,
+        userId: user.id,
+        userEmail: user.primaryEmailAddress?.emailAddress,
+        userName: user.fullName || user.username,
+      };
+
+      await api.createCar(payload);
+      setMessage('Listing created successfully!');
+      setFormData({});
+      setSelectedFeatures([]);
+      setTimeout(() => navigate('/profile'), 1500);
+    } catch (error) {
+      console.error('Error creating listing:', error);
+      setMessage(error.message || 'Failed to create listing.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <Header />
@@ -201,7 +255,17 @@ function AddListing() {
       <div className="container mx-auto px-5 md:px-10 py-10">
         <h2 className="font-bold text-4xl mb-6 text-center text-gray-800">Add New Listing</h2>
 
-        <form className="p-10 bg-white shadow-lg rounded-xl">
+        {message && (
+          <div
+            className={`mb-4 p-4 rounded-md text-center ${
+              message.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {message}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="p-10 bg-white shadow-lg rounded-xl">
           {/* Car Details */}
           <div>
             <h1 className="font-medium text-2xl mb-6 text-gray-700">Car Details</h1>
@@ -215,19 +279,18 @@ function AddListing() {
                 </label>
                 {item.fieldType === 'text' || item.fieldType === 'number' ? (
                   <InputField
-                    label={item.label}
-                    name={item.name}
-                    type={item.fieldType}
-                    required={item.required}
-                    handleInputChange={handleInputChange}
+                    item={item}
+                    handleinputChange={handleInputChange}
                     className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                 ) : item.fieldType === 'dropdown' ? (
                   <select
                     name={item.name}
                     required={item.required}
+                    onChange={(e) => handleInputChange(item.name, e.target.value)}
                     className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                   >
+                    <option value="">Select {item.label}</option>
                     {item.option?.map((opt, idx) => (
                       <option key={idx} value={opt}>
                         {opt}
@@ -253,6 +316,7 @@ function AddListing() {
                   <textarea
                     name={item.name}
                     required={item.required}
+                    onChange={(e) => handleInputChange(item.name, e.target.value)}
                     className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                 ) : null}
@@ -285,9 +349,10 @@ function AddListing() {
           <div className="mt-8">
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 px-6 rounded-md shadow-lg hover:bg-blue-700 transition"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-3 px-6 rounded-md shadow-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              Submit
+              {loading ? 'Submitting...' : 'Submit'}
             </button>
           </div>
         </form>
@@ -297,3 +362,4 @@ function AddListing() {
 }
 
 export default AddListing;
+

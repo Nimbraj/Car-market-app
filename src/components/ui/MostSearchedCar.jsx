@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CarItem from './CarItem';
-import { faker } from '@faker-js/faker';
-
+import { api } from '@/lib/api';
 import {
   Carousel,
   CarouselContent,
@@ -10,43 +9,57 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-// Generate a list of random car data
-function createRandomCarList() {
-    return {
-        name: faker.vehicle.vehicle(),
-        fuelType: faker.vehicle.fuel(),
-        model: faker.vehicle.model(),
-        type: faker.vehicle.type(),
-        image: 'https://content.carlelo.com/uploads/blog_img/1710568288.webp', // Placeholder for the car image
-        miles: '10000',
-        gearType: 'Automatic',
-        price: faker.finance.amount({ min: 40000, max: 4000000 }),
-    };
-}
-
-// Create a car list with 16 random car objects
-const carList = faker.helpers.multiple(createRandomCarList, { count: 16 });
-
 function MostSearchedCar() {
+  const [carList, setCarList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        setLoading(true);
+        const data = await api.getCars();
+        setCarList(data);
+      } catch (error) {
+        console.error('Error fetching cars:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCars();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto my-16">
+        <h2 className="font-bold text-3xl text-center mb-10">Most Searched Cars</h2>
+        <p className="text-center text-gray-600">Loading cars...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto my-16">
       <h2 className="font-bold text-3xl text-center mb-10">Most Searched Cars</h2>
 
-      <Carousel>
-        <CarouselPrevious />
-        <CarouselContent className="flex gap-4">
-          {carList.length > 0 ? carList.map((car, index) => (
-            <CarouselItem key={index} className="basis-1/4">
-              <CarItem car={car} />
-            </CarouselItem>
-          )) : (
-            <p className="text-center">No cars available.</p>
-          )}
-        </CarouselContent>
-        <CarouselNext />
-      </Carousel>
+      {carList.length > 0 ? (
+        <Carousel>
+          <CarouselPrevious />
+          <CarouselContent className="flex gap-4">
+            {carList.map((car, index) => (
+              <CarouselItem key={car.id || index} className="basis-1/4">
+                <CarItem car={car} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselNext />
+        </Carousel>
+      ) : (
+        <p className="text-center text-gray-600">No cars available.</p>
+      )}
     </div>
   );
 }
 
 export default MostSearchedCar;
+
